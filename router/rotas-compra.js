@@ -37,6 +37,27 @@ router.post('/cliente/:id/compra',async(req,res)=>{
 
 })
 
+// LISTAR COMPRA ID
+router.get('/compra/:id',async(req,res)=>{
+
+    await compra.findByPk(req.params.id).then((dados)=>{
+        
+       return res.json({
+           error:false,
+           dados
+       })     
+            
+
+    }).catch(()=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possível acessar Api.'
+        })
+    })
+ })
+
+
 //LISTAR COMPRAS
 router.get('/listarcompras',async(req,res)=>{
 
@@ -79,6 +100,42 @@ router.get('/listarcompras',async(req,res)=>{
       })
    
    })
+
+   //ATUALIZAR COMPRA ESPECIFICA
+
+   router.put('/compra/:id',async(req,res)=>{
+    const ped={
+        data:req.body.data,
+        ClienteId:req.body.ClienteId,
+        id:req.params.id
+      }
+  
+      if(!await cliente.findByPk(req.body.ClienteId)){
+        return res.status(400).json({
+            error:true,
+            message:'cliente não existe'
+        })
+    }
+    
+    await compra.update(ped,{
+        where:Sequelize.and({ClienteId:req.body.ClienteId},{id:req.params.id})
+    }).then((dados)=>{
+        return res.json({
+            error:false,
+            message:'compra atualizada com sucesso',
+            dados   
+        })
+    }).catch((erro)=>{
+        return res.status(400).json({
+            error:true,
+            message:'Erro:não foi possível atualizar'
+        })
+    })
+    
+  
+
+   })
+
 
    //EXCLUIR COMPRAS
    router.get('/cliente/:id/excluircompra',async(req,res)=>{

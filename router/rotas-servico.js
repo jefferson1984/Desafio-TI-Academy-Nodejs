@@ -40,6 +40,25 @@ router.get('/listarservicos',async(req,res)=>{
     })
 })
 
+//LISTAR SERVICO ID
+
+router.get('/servico/:id',async(req,res)=>{
+
+    await servico.findByPk(req.params.id).then((dados)=>{
+
+        return res.json({
+            error:false,
+            dados
+        })
+    }).catch((erro)=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possivel acessar Api.'
+        })
+    })
+})
+
 //ATUALIZAR SERVIÇO
 router.put('/atualizarservico/:id',async(req,res)=>{
     const serv={
@@ -72,7 +91,7 @@ router.put('/atualizarservico/:id',async(req,res)=>{
 })
 
 //EXCLUIR SERVIÇO
-router.get('/excluirservico/:id',async(req,res)=>{
+router.delete('/excluirservico/:id',async(req,res)=>{
 
     if(!await servico.findByPk(req.params.id)){
         return res.status(400).json({
