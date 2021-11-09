@@ -35,9 +35,27 @@ router.post('/cliente',async(req,res)=>{
     })
 })
 
+//listar cliente id
+
+router.get('/cliente/:id',async(req,res)=>{
+
+    await cliente.findByPk(req.params.id).then((dados)=>{
+
+        return res.json({
+            error:false,
+            dados
+        })
+    }).catch((erro)=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possivel acessar Api.'
+        })
+    })
+})
 
 //atualizar clientes
-router.put('/atualizarcliente/:id',async(req,res)=>{
+router.put('/cliente/atualizar/:id',async(req,res)=>{
     
     
     const cli={
@@ -78,7 +96,7 @@ router.put('/atualizarcliente/:id',async(req,res)=>{
    
    //excluir cliente
 
-   router.get('/excluircliente/:id',async(req,res)=>{
+   router.delete('/excluircliente/:id',async(req,res)=>{
 
     await cliente.destroy({
         where:{id:req.params.id}
