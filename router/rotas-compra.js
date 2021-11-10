@@ -6,7 +6,25 @@ const router=express.Router()
 let compra=models.Compra
 let cliente=models.Cliente
 
-// CADASTRO DE COMPRA
+// CADASTRO COMPRA 
+
+router.post('/compra/cadastro',async(req,res)=>{
+
+    await compra.create(req.body).then((dados)=>{
+
+        return res.json({
+            error:false,
+            dados
+        })
+    }).catch((erro)=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possível acessar Api.'
+        })
+    })
+})
+// CADASTRO DE COMPRA CLIENTE
 router.post('/cliente/:id/compra',async(req,res)=>{
     
     const cp={

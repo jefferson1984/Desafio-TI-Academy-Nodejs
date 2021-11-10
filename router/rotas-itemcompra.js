@@ -7,7 +7,27 @@ const router=express.Router()
 let compra=models.Compra
 let itemcompra=models.ItemCompra
 
-//CADASTRO ITEMCOMPRA
+// CADASTRO ITEMCOMPRA
+
+
+router.post('/itemcompra/cadastro',async(req,res)=>{
+
+    await itemcompra.create(req.body).then((dados)=>{
+
+       return res.json({
+           error:false,
+           dados
+       })
+    }).catch((erro)=>{
+
+       return res.status(400).json({
+           error:true,
+           message:'Nao foi possível acessar Api.'
+       })
+    })
+})
+
+//CADASTRO ITEMCOMPRA 2
 router.post('/compra/:id/itemcompra',async(req,res)=>{
 
     if(!await compra.findByPk(req.params.id)){
@@ -35,7 +55,7 @@ router.post('/compra/:id/itemcompra',async(req,res)=>{
 })
 
 //LISTAR ITEMCOMPRA
-router.get('/listaritemcompra',async(req,res)=>{
+router.get('/listar/compra',async(req,res)=>{
                     
 
     await itemcompra.findAll({
@@ -49,12 +69,55 @@ router.get('/listaritemcompra',async(req,res)=>{
 
 })
 
+//LISTAR ITEMCOMPRA COMPRAID 
+
+router.get('/itemcompra/:id',async(req,res)=>{
+
+    await itemcompra.findAll({
+        where:{CompraId:req.params.id}
+    }).then((dados)=>{
+
+        return res.json({
+            error:false,
+            dados
+        })
+    }).catch((erro)=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possível acessar Api'
+        })
+    })
+})
+
+//LISTAR ITEMCOMPRA PRODUTOID 
+
+router.get('/listaritemcompra/:id',async(req,res)=>{
+
+    await itemcompra.findAll({
+        where:{ProdutoId:req.params.id}
+    }).then((dados)=>{
+
+        return res.json({
+            error:false,
+            dados
+        })
+    }).catch((erro)=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possível acessar Api'
+        })
+    })
+})
+
 //ATUALIZAR ITEMCOMPRA
 router.put('/compra/:id/atualizaritemcompra',async(req,res)=>{
 
     const item={
         quantidade:req.body.quantidade,
-        valor:req.body.valor
+        valor:req.body.valor,
+        CompraId:req.body.CompraId
     }
     
     if(!await compra.findByPk(req.params.id)){
@@ -66,11 +129,12 @@ router.put('/compra/:id/atualizaritemcompra',async(req,res)=>{
     }
 
     await itemcompra.update(item,{
-        where:Sequelize.and({CompraId:req.params.id},{ProdutoId:req.body.ProdutoId})
+        where:Sequelize.and({ProdutoId:req.params.id},{CompraId:req.body.CompraId})
     }).then((dados)=>{
         return res.json({
             error:false,
             message:'Item alterado com sucesso !',
+            dados
            
         })
     }).catch((erro)=>{
@@ -109,6 +173,26 @@ router.get('/compra/:id/excluiritemcompra',async(req,res)=>{
         })
     })
 
+})
+
+//EXCLUIR ITEMCOMPRA ESPECIFICO
+router.delete('/excluircompra/:id',async(req,res)=>{
+
+    await itemcompra.destroy({
+        where:{ProdutoId:req.params.id}
+    }).then(()=>{
+
+        return res.json({
+            error:false,
+            message:'ItemCompra excluído com sucesso.'
+        })
+    }).catch((erro)=>{
+
+        res.status(400).json({
+            error:true,
+            message:'Não foi possível acessar Api.'
+        })
+    })
 })
 
 module.exports=router

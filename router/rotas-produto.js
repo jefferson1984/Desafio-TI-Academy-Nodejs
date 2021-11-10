@@ -6,7 +6,7 @@ const router = express.Router()
 let produto=models.Produto
 
 //CADASTRO PRODUTO
-router.post('/produto',async(req,res)=>{
+router.post('/produtos',async(req,res)=>{
 
     await produto.create(
         req.body
@@ -36,6 +36,26 @@ router.get('/listarprodutos',async(req,res)=>{
     })
 
   })
+
+  // LISTAR PRODUTO ID
+
+  router.get('/listarprodutos/:id',async(req,res)=>{
+
+    await produto.findByPk(req.params.id).then((dados)=>{
+        return res.json({
+            error:false,
+            dados
+        })
+    }).catch((erro)=>{
+
+        return res.status(400).json({
+            error:true,
+            message:'Não foi possível acessar Api.'
+        })
+    })
+
+  })
+
 
   //ATUALIZAR PRODUTO
   router.put('/atualizarproduto/:id',async(req,res)=>{
@@ -70,7 +90,7 @@ router.get('/listarprodutos',async(req,res)=>{
   })
 
   //EXCLUIR PRODUTO
-  router.get('/excluirproduto/:id',async(req,res)=>{
+  router.delete('/excluirproduto/:id',async(req,res)=>{
 
     if(!await produto.findByPk(req.params.id)){
         return res.status(400).json({
